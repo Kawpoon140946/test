@@ -10,11 +10,27 @@
 </head>
 <body>
 
-<video id="webcam" width="640" height="480" autoplay></video>
-<button id="startButton" onclick="startWebcam()">Start</button>
-<button id="stopButton" onclick="stopWebcam()" disabled>Stop</button>
+<video id="webcam" width="640" height="480" autoplay playsinline></video>
+<button id="startButton" disabled>Start</button>
+<button id="stopButton" disabled>Stop</button>
 
 <div id="liveView"></div>
+
+<script>
+  // รอให้ DOM โหลดเสร็จก่อนเชื่อมปุ่มกับฟังก์ชัน
+  document.addEventListener('DOMContentLoaded', () => {
+    const startButton = document.getElementById('startButton');
+    const stopButton = document.getElementById('stopButton');
+
+    // เปิดใช้งานปุ่มเมื่อโมเดลโหลดเสร็จ
+    init().then(() => {
+      startButton.disabled = false;
+    });
+
+    startButton.addEventListener('click', startWebcam);
+    stopButton.addEventListener('click', stopWebcam);
+  });
+</script>
 
 </body>
 </html>
