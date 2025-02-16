@@ -2,6 +2,7 @@ body {
   font-family: helvetica, arial, sans-serif;
   margin: 2em;
   color: #3D3D3D;
+  text-align: center;
 }
 
 h1 {
@@ -11,6 +12,10 @@ h1 {
 
 video {
   display: block;
+  margin: 0 auto;
+  max-width: 100%;
+  border-radius: 8px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 20%);
 }
 
 section {
@@ -23,30 +28,35 @@ section {
 }
 
 .invisible {
-  opacity: 0.2;
+  opacity: 20%;
 }
 
-.camView {
+.cam-view {
   position: relative;
-  float: left;
+  max-width: 640px;
   width: calc(100% - 20px);
-  margin: 10px;
+  margin: 10px auto;
   cursor: pointer;
+  border-radius: 8px;
+  overflow: hidden;
 }
 
-.camView p {
+.cam-view p {
   position: absolute;
   padding: 5px;
-  background-color: rgba(255, 111, 0, 0.85);
-  color: #FFFFFF;
-  border: 1px dashed rgba(255, 255, 255, 0.7);
+  background-color: hsl(32, 100%, 50%, 85%);
+  color: #FFF;
+  border: 1px dashed hsl(0, 0%, 100%, 70%);
+  border-radius: 4px;
   z-index: 2;
   font-size: 12px;
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 20%);
 }
 
 .highlighter {
-  background: rgba(0, 255, 0, 0.25);
-  border: 1px dashed #ffffff;
+  background: hsl(120, 100%, 50%, 25%);
+  border: 1px dashed #FFF;
   z-index: 1;
   position: absolute;
+  border-radius: 4px;
 }
