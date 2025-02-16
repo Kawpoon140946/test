@@ -1,98 +1,89 @@
 let webcamStream;
 let model;
 let isDetecting = false;
+
 const videoElement = document.getElementById('webcam');
 const startButton = document.getElementById('startButton');
 const stopButton = document.getElementById('stopButton');
 const liveView = document.getElementById('liveView');
 
-// Check if webcam access is supported.
+// ตรวจสอบว่ากล้องรองรับหรือไม่
 function getUserMediaSupported() {
   return !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia);
 }
 
-// Initialize the app
+// โหลดโมเดล COCO-SSD
 async function init() {
   if (!getUserMediaSupported()) {
     console.error('getUserMedia() is not supported by your browser');
     return;
   }
 
-  // Load COCO-SSD model
-  model = await cocoSsd.load();
+  try {
+    model = await cocoSsd.load();
+    console.log('COCO-SSD model loaded successfully');
+  } catch (error) {
+    console.error('Error loading model:', error);
+  }
 }
 
-// Enable the live webcam view and start object detection.
+// เริ่มใช้งานกล้อง
 async function startWebcam() {
-  if (isDetecting) return;
-
-  // getUsermedia parameters to force video but not audio.
-  const constraints = { video: true };
+  if (isDetecting || !model) {
+    console.warn('Webcam already running or model not loaded');
+    return;
+  }
 
   try {
-    // Activate the webcam stream.
-    webcamStream = await navigator.mediaDevices.getUserMedia(constraints);
+    webcamStream = await navigator.mediaDevices.getUserMedia({ video: true });
     videoElement.srcObject = webcamStream;
-
-    // Enable the stop button and disable the start button.
     startButton.disabled = true;
     stopButton.disabled = false;
-
-    // Start object detection.
+    isDetecting = true;
     detectObjects();
   } catch (error) {
     console.error('Error accessing webcam:', error);
   }
 }
 
-// Disable the live webcam view.
+// ปิดกล้อง
 function stopWebcam() {
   if (!isDetecting) return;
 
   if (webcamStream) {
-    // Stop the webcam stream.
-    const tracks = webcamStream.getTracks();
-    tracks.forEach(track => track.stop());
-
-    // Stop the video element.
+    webcamStream.getTracks().forEach(track => track.stop());
     videoElement.srcObject = null;
-
-    // Disable the stop button and enable the start button.
-    startButton.disabled = false;
-    stopButton.disabled = true;
-
-    // Stop object detection.
-    isDetecting = false;
   }
+
+  startButton.disabled = false;
+  stopButton.disabled = true;
+  isDetecting = false;
 }
 
-// Perform object detection on the webcam stream.
+// ตรวจจับวัตถุ
 async function detectObjects() {
-  isDetecting = true;
-
-  // Now let's start classifying a frame in the stream.
   while (isDetecting) {
     try {
-      const predictions = await model.detect(videoElement);
+      if (!model) {
+        console.error('Model not loaded');
+        break;
+      }
 
-      // Display predictions on the live view.
+      const predictions = await model.detect(videoElement);
       displayPredictions(predictions);
 
-      // Wait for the next animation frame.
       await new Promise(resolve => requestAnimationFrame(resolve));
     } catch (error) {
       console.error('Error detecting objects:', error);
-      isDetecting = false;
+      stopWebcam();
     }
   }
 }
 
-// Display object detection predictions on the live view.
+// แสดงผล
 function displayPredictions(predictions) {
-  // Clear previous predictions.
   liveView.innerHTML = '';
 
-  // Loop through predictions and draw them on the live view.
   predictions.forEach(prediction => {
     if (prediction.score > 0.5) {
       const p = document.createElement('p');
@@ -102,5 +93,9 @@ function displayPredictions(predictions) {
   });
 }
 
-// Initialize the app when the page loads.
-init();
+// โหลดโมเดลเมื่อหน้าเว็บพร้อม
+window.addEventListener('load', init);
+
+// เชื่อมปุ่มเข้ากับฟังก์ชัน
+startButton.addEventListener('click', startWebcam);
+stopButton.addEventListener('click', stopWebcam);
