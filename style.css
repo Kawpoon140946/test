@@ -15,7 +15,7 @@ video {
   margin: 0 auto;
   max-width: 100%;
   border-radius: 8px;
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 20%);
+  box-shadow: 0px 4px 8px rgba(0px, 0px, 0px, 20%);
 }
 
 section {
@@ -28,7 +28,7 @@ section {
 }
 
 .invisible {
-  opacity: 20%;
+  opacity: 0.2;
 }
 
 .cam-view {
@@ -44,7 +44,7 @@ section {
 .cam-view p {
   position: absolute;
   padding: 5px;
-  background-color: hsl(32, 100%, 50%, 85%);
+  background-color: hsl(32deg, 100%, 50%, 85%);
   color: #FFF;
   border: 1px dashed hsl(0, 0%, 100%, 70%);
   border-radius: 4px;
